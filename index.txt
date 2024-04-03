@@ -1,0 +1,35 @@
+const mongoose = require('mongoose');
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/beta', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Create schemas
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String
+});
+
+const postSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+});
+
+// Create models
+const User = mongoose.model('User', userSchema);
+const Post = mongoose.model('Post', postSchema);
+
+// Usage example
+async function createData() {
+  // Create a new user
+  const newUser = await User.create({ username: 'JohnDoe', email: 'john@example.com', password: 'password123' });
+
+  // Create a new post
+  const newPost = await Post.create({ title: 'Hello World', content: 'This is my first post!', author: newUser._id });
+
+  console.log('User:', newUser);
+  console.log('Post:', newPost);
+}
+
+createData();
