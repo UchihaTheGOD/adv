@@ -1,0 +1,127 @@
+Practical 1 Mongo
+
+// index.js
+
+const mongoose = require('mongoose');
+
+// Connect to MongoDB
+mongoose.connect('mongodb+srv://daddy:r3y$7DZnvNerj8c@bhikmongo.romhzbc.mongodb.net/daddykadoda')
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+  });
+
+// mongodb+srv://daddy:r3y$7DZnvNerj8c@bhikmongo.romhzbc.mongodb.net/
+
+// Create schemas
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String
+});
+
+const postSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+});
+
+// Create models
+const User = mongoose.model('User', userSchema);
+const Post = mongoose.model('Post', postSchema);
+
+// Usage example
+async function createData() {
+  // Create a new user
+  const newUser = await User.create({ username: 'JohnDoe', email: 'john@example.com', password: 'password123' });
+
+  // Create a new post
+  const newPost = await Post.create({ title: 'Hello World', content: 'This is my first post!', author: newUser._id });
+
+  console.log('User:', newUser);
+  console.log('Post:', newPost);
+}
+
+createData();
+
+
+Practical 2 Mongo
+
+// index.js
+const mongoose = require('mongoose');
+
+// Connect to MongoDB
+mongoose.connect('mongodb+srv://daddy:r3y$7DZnvNerj8c@bhikmongo.romhzbc.mongodb.net/daddykadoda', {
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 30000
+})
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+  });
+
+// Create schemas
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String
+});
+
+const postSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+});
+
+// Create models
+const User = mongoose.model('User', userSchema);
+const Post = mongoose.model('Post', postSchema);
+
+// CRUD operations
+async function crudOperations() {
+  try {
+    // Create a new user
+    const newUser = await User.create({
+      username: 'JaneDoe',
+      email: 'jane@example.com',
+      password: 'password456'
+    });
+    console.log('New User:', newUser);
+
+    // Read all users
+    const users = await User.find();
+    console.log('All Users:', users);
+
+    // Update a user
+    const updatedUser = await User.findByIdAndUpdate(
+      newUser._id,
+      { username: 'JaneSmith' },
+      { new: true }
+    );
+    console.log('Updated User:', updatedUser);
+
+    // Create a new post
+    const newPost = await Post.create({
+      title: 'My Second Post',
+      content: 'This is my second post!',
+      author: newUser._id
+    });
+    console.log('New Post:', newPost);
+
+    // Read all posts
+    const posts = await Post.find().populate('author');
+    console.log('All Posts:', posts);
+
+    // Delete a post
+    const deletedPost = await Post.findByIdAndDelete(newPost._id);
+    console.log('Deleted Post:', deletedPost);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+crudOperations();
