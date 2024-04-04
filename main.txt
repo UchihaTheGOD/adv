@@ -1,0 +1,362 @@
+Practical 1
+// index.js
+
+const mongoose = require('mongoose');
+
+// Connect to MongoDB
+mongoose.connect('mongodb+srv://daddy:r3y$7DZnvNerj8c@bhikmongo.romhzbc.mongodb.net/daddykadoda')
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+  });
+
+// mongodb+srv://daddy:r3y$7DZnvNerj8c@bhikmongo.romhzbc.mongodb.net/
+
+// Create schemas
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String
+});
+
+const postSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+});
+
+// Create models
+const User = mongoose.model('User', userSchema);
+const Post = mongoose.model('Post', postSchema);
+
+// Usage example
+async function createData() {
+  // Create a new user
+  const newUser = await User.create({ username: 'JohnDoe', email: 'john@example.com', password: 'password123' });
+
+  // Create a new post
+  const newPost = await Post.create({ title: 'Hello World', content: 'This is my first post!', author: newUser._id });
+
+  console.log('User:', newUser);
+  console.log('Post:', newPost);
+}
+
+createData();
+
+Practical 2
+
+// index.js
+const mongoose = require('mongoose');
+
+// Connect to MongoDB
+mongoose.connect('mongodb+srv://daddy:r3y$7DZnvNerj8c@bhikmongo.romhzbc.mongodb.net/daddykadoda', {
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 30000
+})
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+  });
+
+// Create schemas
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String
+});
+
+const postSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+});
+
+// Create models
+const User = mongoose.model('User', userSchema);
+const Post = mongoose.model('Post', postSchema);
+
+// CRUD operations
+async function crudOperations() {
+  try {
+    // Create a new user
+    const newUser = await User.create({
+      username: 'JaneDoe',
+      email: 'jane@example.com',
+      password: 'password456'
+    });
+    console.log('New User:', newUser);
+
+    // Read all users
+    const users = await User.find();
+    console.log('All Users:', users);
+
+    // Update a user
+    const updatedUser = await User.findByIdAndUpdate(
+      newUser._id,
+      { username: 'JaneSmith' },
+      { new: true }
+    );
+    console.log('Updated User:', updatedUser);
+
+    // Create a new post
+    const newPost = await Post.create({
+      title: 'My Second Post',
+      content: 'This is my second post!',
+      author: newUser._id
+    });
+    console.log('New Post:', newPost);
+
+    // Read all posts
+    const posts = await Post.find().populate('author');
+    console.log('All Posts:', posts);
+
+    // Delete a post
+    const deletedPost = await Post.findByIdAndDelete(newPost._id);
+    console.log('Deleted Post:', deletedPost);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+crudOperations();
+
+Practical 3
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AngularJS Form Validation</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    h1 {
+      color: green;
+    }
+  </style>
+</head>
+<body ng-app="developapp">
+  <h1>GeeksforGeeks</h1>
+  <h3>AngularJS Custom Form Validation</h3>
+  <form name="form1">
+    Username: <input name="username" required><br><br>
+    Age: <input name="userage" ng-model="userage" required app-directive>
+  </form>
+  <p>The input's valid state is:</p>
+  <h3>{{form1.userage.$valid}}</h3>
+  <script>
+    var app = angular.module('developapp', []);
+
+    app.directive('appDirective', function () {
+      return {
+        require: 'ngModel',
+        link: function (scope, element, attr, mCtrl) {
+          function myValidation(value) {
+            if (value >= 18) {
+              mCtrl.$setValidity('charE', true);
+            } else {
+              mCtrl.$setValidity('charE', false);
+            }
+            return value;
+          }
+          
+          mCtrl.$parsers.push(myValidation);
+        }
+      };
+    });
+  </script>
+</body>
+</html>
+
+
+Practical 4
+
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body>
+  <div ng-app="myApp" ng-controller="myCtrl">
+    {{ firstName + " " + lastName }}
+  </div>
+  <script>
+    var app = angular.module("myApp", []);
+    app.controller("myCtrl", function($scope) {
+      $scope.firstName = "John";
+      $scope.lastName = "Doe";
+    });
+  </script>
+</body>
+</html>
+
+
+Practical no.5
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+  <style>
+    h1 {
+      color: green;
+    }
+
+    button {
+      color: white;
+      background-color: black;
+      height: 30px;
+      width: 160px;
+      padding: 3px;
+      margin: 5px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body ng-app="myApp">
+  <center>
+    <h1>Geeksforgeeks</h1>
+    <div ng-controller="MyCtrl">
+      <button ng-click="generateError()">Generate Error</button>
+    </div>
+  </center>
+  <script>
+    angular.module('myApp', [])
+    .factory('errorService', function () {
+      return function (errorMessage) {
+        alert(errorMessage);
+      };
+    })
+    .controller('MyCtrl', function ($scope, errorService) {
+      $scope.generateError = function () {
+        errorService("Error: This is a sample custom Error!");
+      };
+    });
+  </script>
+</body>
+</html>
+
+Practical no.6
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Angular show hide table element on click</title>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+</head>
+<body>
+<div ng-app="mainApp" ng-controller="MyCtrl">
+  <button ng-click="showPresent()">Show People Present</button>
+  <button ng-click="showAbsent()">Show People Absent</button>
+  <table>
+    <tr>
+      <td>Name</td>
+      <td>Age</td>
+    </tr>
+    <tr ng-repeat="p in people" ng-show="p.attended==flag">
+      <td>{{p.name}}</td>
+      <td>{{p.Age}}</td>
+    </tr>
+  </table>
+</div>
+
+<script>
+  var app = angular.module("mainApp", []);
+  app.controller("MyCtrl", function($scope) {
+    $scope.flag = 1;
+    $scope.people = [
+      { name: "GeekAgashi", Age: 12, attended: 1 },
+      { name: "GeekSatoshi", Age: 16, attended: 0 },
+      { name: "GeekNakumato", Age: 14, attended: 1 }
+    ];
+
+    $scope.showPresent = function() {
+      $scope.flag = 1;
+    };
+
+    $scope.showAbsent = function() {
+      $scope.flag = 0;
+    };
+  });
+</script>
+</body>
+</html>
+
+Practical 7
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/w3css/4/w3.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body ng-app="myApp" ng-controller="userCtrl">
+  <div class="w3-container">
+    <h3>Users</h3>
+    <table class="w3-table w3-bordered w3-striped">
+      <tr>
+        <th>Edit</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+      </tr>
+      <tr ng-repeat="user in users">
+        <td>
+          <button class="w3-btn w3-ripple" ng-click="editUser(user.id)">&#9998; Edit</button>
+        </td>
+        <td>{{ user.fName }}</td>
+        <td>{{ user.lName }}</td>
+      </tr>
+    </table>
+    <br>
+    <button class="w3-btn w3-green w3-ripple" ng-click="editUser('new')">&#9998; Create New User</button>
+    <form ng-hide="hideform">
+      <h3 ng-show="edit">Create New User:</h3>
+      <h3 ng-hide="edit">Edit User:</h3>
+      <label>First Name:</label>
+      <input class="w3-input w3-border" type="text" ng-model="fName" ng-disabled="!edit" placeholder="First Name">
+      <br>
+      <label>Last Name:</label>
+      <input class="w3-input w3-border" type="text" ng-model="lName" ng-disabled="!edit" placeholder="Last Name">
+      <br>
+      <label>Password:</label>
+      <input class="w3-input w3-border" type="password" ng-model="passw1" placeholder="Password">
+      <br>
+      <label>Repeat:</label>
+      <input class="w3-input w3-border" type="password" ng-model="passw2" placeholder="Repeat Password">
+      <br>
+      <button class="w3-btn w3-green w3-ripple" ng-disabled="error || incomplete">&#10004; Save Changes</button>
+    </form>
+  </div>
+  <script src="myUsers.js"></script>
+</body>
+</html>
+
+Practical 8
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+  <div ng-app="myApp" ng-controller="personCtrl">
+    First Name: <input type="text" ng-model="firstName"><br>
+    Last Name: <input type="text" ng-model="lastName"><br><br>
+    Full Name: {{fullName()}}
+  </div>
+
+  <script>
+    var app = angular.module('myApp', []);
+
+    app.controller('personCtrl', function($scope) {
+      $scope.firstName = "John";
+      $scope.lastName = "Doe";
+
+      $scope.fullName = function() {
+        return $scope.firstName + " " + $scope.lastName;
+      };
+    });
+  </script>
+</body>
+</html>
